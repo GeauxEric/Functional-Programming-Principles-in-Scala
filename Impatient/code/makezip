@@ -1,0 +1,3 @@
+find -name "*~" -exec rm {} \;
+find -name "*.class" -exec rm {} \;
+jar cvfM /home/cay/web/com/scala/scala-impatient-code.zip ch*
