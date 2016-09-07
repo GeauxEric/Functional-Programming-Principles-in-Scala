@@ -110,5 +110,64 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("intersect") {
+    new TestSets {
+      val s = intersect(union(s1, s2), union(s2, s3))
+      assert(!contains(s, 1), "Intersect 1")
+      assert(contains(s, 2), "Intersect 2")
+      assert(!contains(s, 3), "Intersect 3")
+    }
+  }
+
+  test("diff") {
+    new TestSets {
+      val s = diff(union(s1, s2), union(s2, s3))
+      assert(contains(s, 1), "Intersect 1")
+      assert(!contains(s, 2), "Intersect 2")
+      assert(!contains(s, 3), "Intersect 3")
+    }
+  }
+
+  test("filter") {
+    new TestSets {
+      def p : Int => Boolean = x => x > 1
+      val s = union(union(s1, s2), s3)
+      val f = filter(s, p)
+      assert(contains(f, 2), "Filter 2")
+      assert(contains(f, 3), "Filter 3")
+    }
+  }
+
+  test("forall") {
+    new TestSets {
+      def p : Int => Boolean = x => x > 0
+      val s = union(union(s1, s2), s3)
+      assert(forall(s, p), "Forall 1")
+      def p2 : Int => Boolean = x => x > 1
+      assert(!forall(s, p2), "Forall 2")
+      def p3 : Int => Boolean = x => x < 3
+      assert(!forall(s, p2), "Forall 3")
+    }
+  }
+
+  test("exists") {
+    new TestSets {
+      def p : Int => Boolean = x => x == 2
+      val s = union(union(s1, s2), s3)
+      assert(exists(s, p), "exists 1")
+      def p2 : Int => Boolean = x => x > 4
+      assert(!exists(s, p2), "exists 2")
+    }
+  }
+
+
+  test("map") {
+    new TestSets {
+      val s = union(union(s1, s2), s3)
+      val m = map(s, x => x * x)
+      assert(contains(m, 4), "map 4")
+      assert(!contains(m, 3), "map 1")
+    }
+  }
 
 }
