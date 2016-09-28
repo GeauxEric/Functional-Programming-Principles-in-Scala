@@ -61,5 +61,5 @@ class HuffmanSpec extends FunSuite {
       assert(a == 'a')
     }
   }
-  
+
 }
