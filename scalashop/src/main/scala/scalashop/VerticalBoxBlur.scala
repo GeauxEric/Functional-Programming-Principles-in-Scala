@@ -1,5 +1,6 @@
 package scalashop
 
+import java.util.concurrent.TimeUnit
 import org.scalameter._
 import common._
 
@@ -43,8 +44,14 @@ object VerticalBoxBlur {
    *  bottom.
    */
   def blur(src: Img, dst: Img, from: Int, end: Int, radius: Int): Unit = {
-    // TODO implement this method using the `boxBlurKernel` method
-    ???
+    for {
+      idx <- from until end
+      idy <- 0 until src.height
+      if idx >= 0 && idx < src.width
+    } yield {
+      val r = boxBlurKernel(src, idx, idy, radius)
+      dst.update(idx, idy, r)
+    }
   }
 
   /** Blurs the columns of the source image in parallel using `numTasks` tasks.
@@ -54,8 +61,17 @@ object VerticalBoxBlur {
    *  columns.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    // TODO implement using the `task` construct and the `blur` method
-    ???
+
+    val step = math.max(1, src.width / numTasks)
+    val s = Range(0, src.width) by step
+
+    val tasks = s.map((idx) =>
+      task {
+        blur(src, dst, idx, idx + step, radius)
+      }
+    )
+
+    tasks.map((t) => t.join())
   }
 
 }
